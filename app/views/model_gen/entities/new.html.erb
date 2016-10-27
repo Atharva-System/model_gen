@@ -1,0 +1,77 @@
+<%= form_tag entities_path do %>
+    <div>
+      <label>Model Name</label>
+      <%= text_field_tag :name %>
+    </div>
+    <br/>
+    <br/>
+    <div id="fields">
+      <div id="field">
+        <div>
+          <label>Field Name</label>
+          <%= text_field_tag 'fields[0][name]' %>
+        </div>
+        <br/>
+        <div>
+          <label>Field Type</label>
+          <%= select_tag "fields[0][type]", options_for_select(available_data_types), onchange: 'checkReferences(this)' %>
+        </div>
+        <br/>
+        <a class="remove-field" onclick="removeField(this)" style="display: none;">Remove</a>
+        <br/>
+        <br/>
+      </div>
+    </div>
+    <%= select_tag "model", options_for_select(available_models), style: 'display: none;' %>
+    <a id="add-field">
+      Add Field
+    </a>
+    <%= submit_tag 'Create Model' %>
+<% end %>
+<script>
+  document.getElementById('add-field').onclick = function(){
+    var index = Math.floor(Math.random()*1000000000000000);
+    var field = document.getElementById("field");
+    var new_field = field.cloneNode(true);
+    var field_name_input = new_field.querySelector("div > #fields_0_name")
+    var field_type_input = new_field.querySelector("div > #fields_0_type")
+    if (field_name_input.nodeName.toLowerCase() == 'select'){
+      var new_field_name_input = document.createElement('input')
+      field_name_input.parentElement.replaceChild(new_field_name_input, field_name_input)
+      field_name_input = new_field_name_input
+    }
+    field_name_input.name = 'fields[' + index + '][name]'
+    field_name_input.id = 'fields_' + index + '_name'
+    field_name_input.value = ''
+    field_type_input.name = 'fields[' + index + '][type]'
+    field_type_input.id = 'fields_' + index + '_type'
+    field_type_input.value = ''
+    new_field.querySelector(".remove-field").style = '';
+    document.getElementById("fields").appendChild(new_field);
+  }
+  function removeField(element){
+    console.log(element.parentElement)
+    element.parentElement.remove()
+  }
+  function checkReferences(element){
+    var index = element.id.split('_')[1]
+    if (element.value == 'references') {
+      var field_name_input = element.parentElement.parentElement.querySelector("div > #fields_" + index + "_name")
+      var field_name_select = document.getElementById('model').cloneNode(true);
+      field_name_select.name = 'fields[' + index + '][name]'
+      field_name_select.id = 'fields_' + index + '_name'
+      field_name_select.value = ''
+      field_name_select.style = ''
+      field_name_input.parentElement.replaceChild(field_name_select,field_name_input)
+    } else {
+      var field_name_select = element.parentElement.parentElement.querySelector("div > select#fields_" + index + "_name")
+      if (field_name_select != undefined) {
+        var field_name_input = document.createElement('input')
+        field_name_input.name = 'fields[' + index + '][name]'
+        field_name_input.id = 'fields_' + index + '_name'
+        field_name_input.value = ''
+        field_name_select.parentElement.replaceChild(field_name_input,field_name_select)
+      }
+    }
+  }
+</script>
