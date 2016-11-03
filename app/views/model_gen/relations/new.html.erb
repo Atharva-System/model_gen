@@ -1,0 +1,59 @@
+<% if @errors.present? %>
+    <ul>
+      <% @errors.each do |error| %>
+          <li><%= error %></li>
+      <% end %>
+    </ul>
+<% end %>
+
+<%= form_tag relations_path do %>
+    <div>
+      <label>Target Model</label>
+      <%= select_tag "name", options_for_select(available_models), required: true %>
+    </div>
+    <br/>
+    <br/>
+    <div id="relations">
+      <div id="relation">
+        <div>
+          <label>Relation Type</label>
+          <%= select_tag "relations[0][type]", options_for_select(available_relation_types), required: true %>
+        </div>
+        <br/>
+        <div>
+          <label>Associated Model</label>
+          <%= select_tag "relations[0][model]", options_for_select(available_models), required: true %>
+        </div>
+        <br/>
+        <a class="remove-relation" onclick="removeRelation(this)" style="display: none;">Remove</a>
+        <br/>
+        <br/>
+      </div>
+    </div>
+
+    <a id="add-relation">
+      Add Relation
+    </a>
+    <%= submit_tag 'Define Relations' %>
+<% end %>
+<script>
+  document.getElementById('add-relation').onclick = function(){
+    var index = Math.floor(Math.random()*1000000000000000);
+    var relation = document.getElementById("relation");
+    var new_relation = relation.cloneNode(true);
+    var relation_model_input = new_relation.querySelector("div > #relations_0_model")
+    var relation_type_input = new_relation.querySelector("div > #relations_0_type")
+    relation_model_input.name = 'relations[' + index + '][target_model]'
+    relation_model_input.id = 'relations_' + index + '_target_model'
+    relation_model_input.value = ''
+    relation_type_input.name = 'relations[' + index + '][type]'
+    relation_type_input.id = 'relations_' + index + '_type'
+    relation_type_input.value = ''
+    new_relation.querySelector(".remove-relation").style = '';
+    document.getElementById("relations").appendChild(new_relation);
+  }
+  function removeRelation(element){
+    console.log(element.parentElement)
+    element.parentElement.remove()
+  }
+</script>

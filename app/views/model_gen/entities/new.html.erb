@@ -1,7 +1,15 @@
+<% if @errors.present? %>
+  <ul>
+    <% @errors.each do |error| %>
+      <li><%= error %></li>
+    <% end %>
+  </ul>
+<% end %>
+
 <%= form_tag entities_path do %>
     <div>
       <label>Model Name</label>
-      <%= text_field_tag :name %>
+      <%= text_field_tag :name, '', required: true %>
     </div>
     <br/>
     <br/>
@@ -9,7 +17,7 @@
       <div id="field">
         <div>
           <label>Field Name</label>
-          <%= text_field_tag 'fields[0][name]' %>
+          <%= text_field_tag 'fields[0][name]', '', required: true %>
         </div>
         <br/>
         <div>

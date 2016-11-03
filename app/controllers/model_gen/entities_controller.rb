@@ -6,12 +6,19 @@ module ModelGen
     end
 
     def create
-      command = "rails g model #{params[:name].downcase}"
-      params[:fields].each do |index, field|
-        command = command + " #{field[:name].downcase}:#{field[:type].downcase}"
+      @errors = []
+      if available_models.include?(params[:name].capitalize)
+        @errors << "Model with name #{params[:name]} already exists."
+        render 'new'
+      else
+        command = "rails g model #{params[:name].downcase}"
+        params[:fields].each do |index, field|
+          command = command + " #{field[:name].downcase}:#{field[:type].downcase}"
+        end
+        system command
+        system 'rake db:migrate'
+        redirect_to new_entity_path
       end
-      system command
-      redirect_to new_entity_path
     end
   end
 end
